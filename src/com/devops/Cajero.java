@@ -6,7 +6,8 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Cajero {
-
+//Comentario de cambio develop -> QA
+//Comentario de QA -> master
 	private int saldo;
 	private String historicoMovimientos;
 	private int contadorIntentos;
