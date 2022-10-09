@@ -7,18 +7,34 @@ public class Cajero {
 
 	private int saldo;
 	private String historicoMovimientos;
-	private final byte maxIntentos;
 	private int contadorIntentos;
 	private Scanner entrada;
+	private final String PIN = "1235";
 	
 	public Cajero(int saldoInicial) {
 		this.saldo = saldoInicial;
 		this.contadorIntentos = 0;
-		this.maxIntentos = 3;
 		this.entrada = new Scanner(System.in);
 		this.historicoMovimientos = "";
 		System.out.println("Bienvenido al Cajero Automático");
-		System.out.println("Jonathan Quino");
+		System.out.print("Ingrese el PIN para utilizar la aplicación: ");
+		
+	}
+	
+	public boolean validarPIN(String pin) {
+		if(!pin.equals(PIN)) {
+			setContadorIntentos(getContadorIntentos()+1);
+			System.out.println("El pin es incorrecto");
+			System.out.println("Intentos : " +getContadorIntentos());
+			if(getContadorIntentos()==3) System.out.println("Saliendo de la aplicación....");
+			else System.out.print("Intentalo nuevamente: ");
+			return true;
+		}
+		else {
+			System.out.println("Bienvenido Jonathan Quino");
+			contadorIntentos = 3;
+			return false;
+		}
 	}
 	
 	public void mostrarMenu() {
@@ -38,15 +54,22 @@ public class Cajero {
 				ingresarRegistro("Se ha consultado saldo (opción 1)\n");
 				break;
 			case 2:
-				System.out.print("Ingrese la cantidad a retirar : ");
-				try {
-					retirarEfectivo(entrada.nextInt());
-					ingresarRegistro("Se ha retidado dinero (opción 2)\n");
-					break;
+				if(!(getSaldo()==0)) {
+					System.out.print("Ingrese la cantidad a retirar : ");
+					try {
+						retirarEfectivo(entrada.nextInt());
+						ingresarRegistro("Se ha retidado dinero (opción 2)\n");
+						if(getSaldo()==0) System.out.println("El saldo es 0, considere que no podrá retirar dinero aunque lo intente");
+						break;
+					}
+					catch(InputMismatchException e) {
+						entrada.next();
+						System.out.println("La entrada de retiro no es valida");
+						break;
+					}
 				}
-				catch(InputMismatchException e) {
-					entrada.next();
-					System.out.println("La entrada de retiro no es valida");
+				else {
+					System.out.println("El saldo es 0, ya no puede retirarse dinero");
 					break;
 				}
 			case 3:
@@ -113,16 +136,16 @@ public class Cajero {
 		this.contadorIntentos = contadorIntentos;
 	}
 
-	public byte getMaxIntentos() {
-		return maxIntentos;
-	}
-
 	public Scanner getEntrada() {
 		return entrada;
 	}
 
 	public void setEntrada(Scanner entrada) {
 		this.entrada = entrada;
+	}
+
+	public String getPIN() {
+		return PIN;
 	}
 	
 }
