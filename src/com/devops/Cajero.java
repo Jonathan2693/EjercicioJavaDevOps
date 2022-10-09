@@ -1,5 +1,7 @@
 package com.devops;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -51,22 +53,50 @@ public class Cajero {
 		switch(opcion) {
 			case 1:
 				consultarSaldo();
-				ingresarRegistro("Se ha consultado saldo (opción 1)\n");
+				ingresarRegistro(1);
+				System.out.println("Eliga una opcion para continuar");
+				System.out.println("	1. Regresar al menu principal");
+				System.out.println("	2. Salir");
+				int eleccion;
+				try {
+					eleccion = entrada.nextInt();
+					if (eleccion==1) break;
+					else if (eleccion==2) {
+						salir = true;
+						break;
+					}
+					else System.out.println("Entrada de datos no válida");
+				}
+				catch(InputMismatchException e) {
+					entrada.next();
+					System.out.println("La entrada de datos no es válida");
+				}
 				break;
 			case 2:
 				if(!(getSaldo()==0)) {
-					System.out.print("Ingrese la cantidad a retirar : ");
+					System.out.println("Seleccion una de las dos opciones");
+					System.out.println("	1. Regresar al menu principal");
+					System.out.println("	2. Salir");
+					System.out.print("ó Ingrese la cantidad a retirar : ");
 					try {
-						retirarEfectivo(entrada.nextInt());
-						ingresarRegistro("Se ha retidado dinero (opción 2)\n");
-						if(getSaldo()==0) System.out.println("El saldo es 0, considere que no podrá retirar dinero aunque lo intente");
-						break;
+						eleccion = entrada.nextInt();
+						if (eleccion==1) break;
+						if (eleccion==2) {
+							salir = true;
+							break;
+						}
+						if(eleccion!=1 || eleccion!=2) {
+								retirarEfectivo(eleccion);
+								ingresarRegistro(2);
+								if(getSaldo()==0) System.out.println("El saldo es 0, considere que no podrá retirar dinero aunque lo intente");
+								break;
+						}
 					}
 					catch(InputMismatchException e) {
 						entrada.next();
-						System.out.println("La entrada de retiro no es valida");
-						break;
+						System.out.println("La entrada de datos no es válida");
 					}
+					break;
 				}
 				else {
 					System.out.println("El saldo es 0, ya no puede retirarse dinero");
@@ -74,7 +104,22 @@ public class Cajero {
 				}
 			case 3:
 				consultarHistorico();
-				ingresarRegistro("Se ha consultado el histórico (opción 2)\n");
+				System.out.println("Seleccion una de las dos opciones");
+				System.out.println("	1. Regresar al menu principal");
+				System.out.println("	2. Salir");
+				try {
+					eleccion = entrada.nextInt();
+					if (eleccion==1) break;
+					else if (eleccion==2) {
+						salir = true;
+						break;
+					}
+					else System.out.println("Entrada de datos no válida");
+				}
+				catch(InputMismatchException e) {
+					entrada.next();
+					System.out.println("La entrada de datos no es válida");
+				}
 				break;
 			case 4:
 				System.out.println("Saliendo de la aplicación......");
@@ -90,8 +135,12 @@ public class Cajero {
 		
 	}
 
-	private void ingresarRegistro(String registro) {
-		setHistoricoMovimientos(getHistoricoMovimientos() + registro);
+	private void ingresarRegistro(int accion) {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-M-yyyy hh:mm:ss");
+		String fecha = dtf.format(LocalDateTime.now());
+		String accionRegistro = accion==1 ? "Accion: Consulta de Saldo - ": "Accion: Retiro de dinero - ";
+		String nuevoRegistro = fecha + " - " + accionRegistro + "Saldo Actual: "+ getSaldo() + " mxn\n";
+		setHistoricoMovimientos(getHistoricoMovimientos() + nuevoRegistro);
 		
 	}
 
